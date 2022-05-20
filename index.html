@@ -1,0 +1,318 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+
+
+<!-- Link library leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+crossorigin="" />
+
+
+
+<!-- W3 CSS template -->
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+
+
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+crossorigin="">
+</script>
+
+
+
+<style>
+#mapid {
+height: 800px;
+}
+</style>
+
+
+
+<title>Tourist map</title>
+<h1 align='center'><b>สถานที่ท่องเที่ยวในน่าน 5 เเห่ง ในประเทศไทย<b></h1>
+<p style="color:blue;"><strong><em> โดย นายเสริมสิทธิ์ อนุวารีพงษ์.</em></strong></p>
+</head>
+<body style="background-image: url(http://aewdee-review.com/wp-content/uploads/2017/11/%E0%B8%99%E0%B9%88%E0%B8%B2%E0%B8%99-800x445.jpg);background-position: center;
+      background-repeat: no-repeat; background-size: cover;">
+<!-- แบ่งหน้าจอ -->
+<div class="w3-row">
+<div id="mapid" class="w3-half"></div>
+<div id="content" class="w3-half">
+<table class="w3-table w3-striped">
+<tr>
+<th>ชื่อแหล่งท่องเที่ยว</th>
+<th>ประเภท</th>
+<th>คะเเนน</th>
+</tr>
+<tr>
+<td>น้ำตก A</td>
+<td>ธรรมชาติ</td>
+<td>A</td>
+</tr>
+</table>
+</div>
+</div>
+
+
+
+<!-- เรียกแผนที่ขึ้นมาแสดง -->
+<script>
+var map = L.map("mapid").setView([18.777781164012307,100.83547597817635],9);
+var osm = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}").addTo(map);
+var gsat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}").addTo(map);
+var OpenStreetMap_France = L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png").addTo(map);
+var baseMaps ={
+  ESWI:osm,
+  NGWM:gsat,
+  France:OpenStreetMap_France,
+};
+//add data
+var tourpoint = {
+type: "FeatureCollection",
+name: "tour_plk",
+crs: {
+type: "name",
+properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+},
+features: [
+{
+type: "Feature",
+properties: {
+Name: "กาแฟบ้านไทลื้อ อ.ปัว",
+Type: "ร้านค้า/จุดชมวิว",
+FID_1: 1358.0,
+level: "4.2",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[100.94055450579849,19.145947769033068]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "ซุ้มลีลาวดี พิพิธภัณฑสถานแห่งชาติน่าน",
+Type: "พิพิธภัทฑ์",
+FID_1: 1357.0,
+level: "4.4",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[100.77093658180316,18.776147142321157]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "ดอยเสมอดาว",
+Type: "ธรรมชาติ/จุดชมวิว",
+FID_1: 1362.0,
+level: "4.5",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[100.82733322355759,18.376157128217667]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "เสาดินนาน้อย",
+Type: "ธรรมชาติ",
+FID_1: 1364.0,
+level: "4.2",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[100.75299037098898,18.303489275192526]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "วัดภูเก็ต",
+Type: "วัด",
+FID_1: 1355.0,
+level: "4.5",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[100.93411938374418,19.165372298547624]],
+},
+},
+],
+};
+
+//add maker and popup
+var tourLayer = L.geoJSON(tourpoint, {
+pointToLayer: function (feature, latlng) {
+return L.marker(latlng).bindPopup(feature.properties.Name);
+},
+onEachFeature: function (feature, layer) {
+layer.on("mouseover", function () {
+document
+.getElementById(feature.properties.FID_1)
+.classList.add("w3-red");
+});
+
+
+
+layer.on("mouseout", function () {
+document
+.getElementById(feature.properties.FID_1)
+.classList.remove("w3-red");
+});
+},
+}).addTo(map);
+//Link table with popup and marker
+var cont = "";
+cont += "<table class='w3-table w3-striped'>";
+cont += "<tr>";
+cont += "<th>ชื่อแหล่งท่องเที่ยว</th>";
+cont += "<th>ประเภท</th>";
+cont += "<th>ระดับ</th>";
+cont += "</tr>";
+for (let i in tourpoint.features) {
+cont += "<tr id=" + tourpoint.features[i].properties.FID_1 + ">";
+cont += "<td>" + tourpoint.features[i].properties.Name + "</td>";
+cont += "<td>" + tourpoint.features[i].properties.Type + "</td>";
+cont += "<td>" + tourpoint.features[i].properties.level + "</td>";
+cont += "</tr>";
+}
+cont += "</table>";
+console.log(cont);
+document.getElementById("content").innerHTML = cont;
+
+var polygonGeoJson = {
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "stroke": "#2b2b2b",
+        "stroke-width": 2,
+        "stroke-opacity": 1,
+        "fill": "#ff0000",
+        "fill-opacity": 0.5
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              101.28570556640624,
+              18.265869811558165
+            ],
+            [
+              101.15936279296875,
+              18.2397859708389
+            ],
+            [
+              101.1785888671875,
+              18.346704792867193
+            ],
+            [
+              101.06048583984375,
+              18.435319042337355
+            ],
+            [
+              101.19781494140625,
+              18.565551112691665
+            ],
+            [
+              101.26922607421875,
+              18.6800731753298
+            ],
+            [
+              101.25274658203125,
+              18.72169840803596
+            ],
+            [
+              101.28021240234375,
+              18.88030044453507
+            ],
+            [
+              101.37359619140625,
+              19.043945074620254
+            ],
+            [
+              101.29394531249999,
+              19.12700450429055
+            ],
+            [
+              101.2774658203125,
+              19.401839908334264
+            ],
+            [
+              101.29394531249999,
+              19.598606721590237
+            ],
+            [
+              100.97259521484375,
+              19.665866618043196
+            ],
+            [
+              100.4864501953125,
+              19.51578670986151
+            ],
+            [
+              100.44525146484375,
+              19.142573505413626
+            ],
+            [
+              100.2008056640625,
+              18.297165247277814
+            ],
+            [
+              100.51666259765625,
+              17.897727988564345
+            ],
+            [
+              101.28570556640624,
+              18.265869811558165
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
+
+var polygonLayer = L.geoJSON(polygonGeoJson, {
+style: function (feature) {
+return { color: feature.properties.color };
+},
+onEachFeature: function (feature, layer) {
+layer.bindPopup(feature.properties.name);
+
+
+
+layer.on("mouseover", function () {
+layer.openPopup();
+});
+
+
+
+layer.on("mouseout", function () {
+layer.closePopup();
+});
+},
+});
+
+var overlays = {
+  สถานที่ท่องเที่ยวในน่าน:tourLayer,
+  ขอบเขตเเหล่งท่องเที่ยว:polygonLayer
+};
+
+L.control.layers(baseMaps,overlays).addTo(map);
+</script>
+
+
+
+</body>
+</html>
